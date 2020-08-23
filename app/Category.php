@@ -44,4 +44,10 @@ class Category extends Model
         // menggunakan relasi one to many dengan foreign key parent_it
         return $this->hasMany(Category::class, 'parent_id');
     }
+
+    public function product()
+    {
+        // jenis relasinya adalah one to many, berarti kategori ini bisa digunakan oleh banyak produk
+        return $this->hasMany(Product::class);
+    }
 }
