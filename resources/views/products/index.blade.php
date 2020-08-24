@@ -18,10 +18,13 @@
                         <div class="card-header">
                             <h4 class="card-title">
                                 List Product
+                                <div class="float-right">
+                                    <a href="{{ route('product.bulk') }}" class="btn btn-danger btn-sm">Mass Upload</a>
+                                    <!-- BUAT TOMBOL UNTUK MENGARAHKAN KE HALAMAN ADD PRODUK -->
+                                    <a href="{{ route('product.create') }}"
+                                        class="btn btn-primary btn-sm float-right">Tambah</a>
+                                </div>
 
-                                <!-- BUAT TOMBOL UNTUK MENGARAHKAN KE HALAMAN ADD PRODUK -->
-                                <a href="{{ route('product.create') }}"
-                                    class="btn btn-primary btn-sm float-right">Tambah</a>
                             </h4>
                         </div>
                         <div class="card-body">
@@ -88,7 +91,7 @@
                                                 <form action="{{ route('product.destroy', $row->id) }}" method="post">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <a href="{{ route('category.edit', $row->id) }}"
+                                                    <a href="{{ route('product.edit', $row->id) }}"
                                                         class="btn btn-warning btn-sm">Edit</a>
                                                     <button class="btn btn-danger btn-sm">Hapus</button>
                                                 </form>

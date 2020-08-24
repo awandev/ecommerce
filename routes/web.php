@@ -14,9 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+Route::get('/', 'Ecommerce\FrontController@index')->name('front.index');
+Route::get('/product', 'Ecommerce\FrontController@product')->name('front.product');
 
 Auth::routes();
 
@@ -28,6 +31,8 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'auth'], function () 
 
     //INI ADALAH ROUTE BARU
     Route::resource('category', 'CategoryController')->except(['create', 'show']);
+    Route::resource('product', 'ProductController')->except(['show']);
 });
 
-Route::resource('product', 'ProductController');
+Route::get('/product/bulk', 'ProductController@massUploadForm')->name('product.bulk');
+Route::post('/product/bulk', 'ProductController@massUpload')->name('product.saveBulk');
