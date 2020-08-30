@@ -25,6 +25,17 @@ Route::get('/category/{slug}', 'Ecommerce\FrontController@categoryProduct')->nam
 
 
 
+Route::post('cart', 'Ecommerce\CartController@addToCart')->name('front.cart');
+Route::get('/cart', 'Ecommerce\CartController@listCart')->name('front.list_cart');
+Route::post('/cart/update', 'Ecommerce\CartController@updateCart')->name('front.update_cart');
+
+
+Route::get('/checkout', 'Ecommerce\CartController@checkout')->name('front.checkout');
+Route::post('/checkout', 'Ecommerce\CartController@processCheckout')->name('front.store_checkout');
+Route::get('city', 'Ecommerce\CartController@getCity'); //route API untuk city
+Route::get('district', 'Ecommerce\CartController@getDistrict'); //route API untuk district
+
+
 Auth::routes();
 
 // ini adalah grouping route, sehingga semua route yang ada di dalamnya 

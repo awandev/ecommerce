@@ -47,24 +47,32 @@
                         </li>
                     </ul>
                     <p></p>
-                    <div class="product_count">
-                        <label for="qty">Quantity:</label>
-                        <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
-                            class="input-text qty">
-                        <button
-                            onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
-                            class="increase items-count" type="button">
-                            <i class="lnr lnr-chevron-up"></i>
-                        </button>
-                        <button
-                            onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
-                            class="reduced items-count" type="button">
-                            <i class="lnr lnr-chevron-down"></i>
-                        </button>
-                    </div>
-                    <div class="card_area">
-                        <a class="main_btn" href="#">Add to Cart</a>
-                    </div>
+
+                    <form action="{{ route('front.cart') }}" method="POST">
+                        @csrf
+                        <div class="product_count">
+                            <label for="qty">Quantity:</label>
+                            <input type="text" name="qty" id="sst" maxlength="12" value="1" title="Quantity:"
+                                class="input-text qty">
+                            <button
+                                onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
+                                class="increase items-count" type="button">
+                                <i class="lnr lnr-chevron-up"></i>
+                            </button>
+                            <button
+                                onclick="var result = document.getElementById('sst'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
+                                class="reduced items-count" type="button">
+                                <i class="lnr lnr-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div class="card_area">
+
+                            <!-- UBAH JADI BUTTON -->
+                            <button class="main_btn">Add to Cart</button>
+                            <!-- UBAH JADI BUTTON -->
+
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
