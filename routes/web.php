@@ -35,6 +35,14 @@ Route::post('/checkout', 'Ecommerce\CartController@processCheckout')->name('fron
 Route::get('city', 'Ecommerce\CartController@getCity'); //route API untuk city
 Route::get('district', 'Ecommerce\CartController@getDistrict'); //route API untuk district
 
+Route::group(['prefix' => 'member', 'namespace' => 'Ecommerce'], function () {
+    Route::get('verify/{token}', 'FrontController@verifyCustomerRegistration')->name('customer.verify');
+    Route::post('login', 'LoginController@login')->name('customer.post_login');
+    Route::group(['middleware' => 'customer'], function () {
+        Route::get('dashboard', 'LoginController@dashboard')->name('customer.dashboard');
+    });
+});
+
 
 Auth::routes();
 

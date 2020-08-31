@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Ecommerce;
 
 use App\Category;
+use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Http\Request;
@@ -50,5 +51,25 @@ class FrontController extends Controller
 
         // load view show.blade.php dan passing data product
         return view('ecommerce.show', compact('product'));
+    }
+
+    public function verifyCustomerRegistration($token)
+    {
+        // jadi kita buat query untuk mengambil data user berdasarkan token yang diterima
+        $customer = Customer::where('activate_token', $token)->first();
+        if ($customer) {
+            // jika ada , maka datanya diupdate dengan mengosongkan tokennya dan statusnya jadi aktif
+            $customer->update([
+                'activate_token' => null,
+                'status' => 1
+            ]);
+
+            // redirect ke halaman login dengan mengirimkan flash session success
+            return redirect(route('customer.login'))->with(['success' => 'Verifikasi Berhasil, Silahkan Login']);
+        }
+
+        // jika tidak ada , maka redirect ke halaman login
+        // dengan mengirimkan flash session error
+        return redirect(route('customer.login'))->with(['error' => 'Invalid Verifikasi Token']);
     }
 }

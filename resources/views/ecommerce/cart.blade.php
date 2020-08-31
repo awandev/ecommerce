@@ -25,14 +25,8 @@
 <section class="cart_area">
     <div class="container">
         <div class="cart_inner">
-
-            <!-- DISABLE BAGIAN INI JIKA INGIN MELIHAT HASILNYA TERLEBIH DAHULU -->
-            <!-- KARENA MODULENYA AKAN DIKERJAKAN PADA SUB BAB SELANJUTNYA -->
-            <!-- HANYA SAJA DEMI KEMUDAHAN PENULISAN MAKA SAYA MASUKKAN PADA BAGIAN INI -->
             <form action="{{ route('front.update_cart') }}" method="post">
                 @csrf
-                <!-- DISABLE BAGIAN INI JIKA INGIN MELIHAT HASILNYA TERLEBIH DAHULU -->
-
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -44,7 +38,6 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- LOOPING DATA DARI VARIABLE CARTS -->
                             @forelse ($carts as $row)
                             <tr>
                                 <td>
@@ -63,22 +56,15 @@
                                 </td>
                                 <td>
                                     <div class="product_count">
-
-
-                                        <!-- PERHATIKAN BAGIAN INI, NAMENYA KITA GUNAKAN ARRAY AGAR BISA MENYIMPAN LEBIH DARI 1 DATA -->
                                         <input type="text" name="qty[]" id="sst{{ $row['product_id'] }}" maxlength="12"
                                             value="{{ $row['qty'] }}" title="Quantity:" class="input-text qty">
                                         <input type="hidden" name="product_id[]" value="{{ $row['product_id'] }}"
                                             class="form-control">
-                                        <!-- PERHATIKAN BAGIAN INI, NAMENYA KITA GUNAKAN ARRAY AGAR BISA MENYIMPAN LEBIH DARI 1 DATA -->
-
-
                                         <button
                                             onclick="var result = document.getElementById('sst{{ $row['product_id'] }}'); var sst = result.value; if( !isNaN( sst )) result.value++;return false;"
                                             class="increase items-count" type="button">
                                             <i class="lnr lnr-chevron-up"></i>
                                         </button>
-
                                         <button
                                             onclick="var result = document.getElementById('sst{{ $row['product_id'] }}'); var sst = result.value; if( !isNaN( sst ) &amp;&amp; sst > 0 ) result.value--;return false;"
                                             class="reduced items-count" type="button">
@@ -125,7 +111,7 @@
 									<h5>Shipping</h5>
 								</td>
 								<td>
-                                    			<div class="shipping_box">
+									<div class="shipping_box">
 										<ul class="list">
 											<li>
 												<a href="#">Flat Rate: $5.00</a>
@@ -139,8 +125,8 @@
 											<li class="active">
 												<a href="#">Local Delivery: $2.00</a>
 											</li>
-                                        </ul>
-                                        <h6>Calculate Shipping
+										</ul>
+										<h6>Calculate Shipping
 											<i class="fa fa-caret-down" aria-hidden="true"></i>
 										</h6>
 										<select class="shipping_select">
@@ -157,7 +143,7 @@
 										<a class="gray_btn" href="#">Update Details</a>
 									</div>
 								</td>
-                            </tr> --}}
+							</tr> --}}
             <tr class="out_button_area">
                 <td></td>
                 <td></td>

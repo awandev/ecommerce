@@ -8,8 +8,7 @@ class Order extends Model
 {
     protected $guarded = [];
 
-    // membuat relasi ke model district.php
-    public function disctict()
+    public function district()
     {
         return $this->belongsTo(District::class);
     }
