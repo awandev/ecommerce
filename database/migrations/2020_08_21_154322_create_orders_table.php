@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->string('customer_id');
 
             $table->string('customer_name');
-            $table->string('customer_phome');
+            $table->string('customer_phone');
             $table->string('customer_address');
             $table->unsignedBigInteger('district_id');
             $table->integer('subtotal');

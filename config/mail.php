@@ -84,8 +84,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'admin@awandev.com'),
-        'name' => env('MAIL_FROM_NAME', 'awandev'),
+        'address' => env('MAIL_FROM_ADDRESS', 'admin@daengweb.id'),
+        'name' => env('MAIL_FROM_NAME', 'DW Ecommerce'),
     ],
 
     /*

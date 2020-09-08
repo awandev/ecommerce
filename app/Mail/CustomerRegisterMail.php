@@ -35,6 +35,12 @@ class CustomerRegisterMail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        // mengeset subject email, view mana yang akan di-load dan data apa yang akan dipassing ke view
+        return $this->subject('Verifikasi Pendaftaran Anda')
+            ->view('emails.register')
+            ->with([
+                'customer'  => $this->customer,
+                'password'  => $this->randomPassword
+            ]);
     }
 }

@@ -57,18 +57,19 @@ class FrontController extends Controller
     {
         // jadi kita buat query untuk mengambil data user berdasarkan token yang diterima
         $customer = Customer::where('activate_token', $token)->first();
+
         if ($customer) {
-            // jika ada , maka datanya diupdate dengan mengosongkan tokennya dan statusnya jadi aktif
+            // jika ada,maka datanya diupdate dengan mengosongkan tokennya dan statusnya jadi aktif
             $customer->update([
-                'activate_token' => null,
-                'status' => 1
+                'activate_token'    => null,
+                'status'            => 1
             ]);
 
             // redirect ke halaman login dengan mengirimkan flash session success
-            return redirect(route('customer.login'))->with(['success' => 'Verifikasi Berhasil, Silahkan Login']);
+            return redirect(route('customer.login'))->with(['success' => 'Verifikasi Berhasial, Silahkan Login']);
         }
 
-        // jika tidak ada , maka redirect ke halaman login
+        // jika tidak ada, maka redirect ke halaman login
         // dengan mengirimkan flash session error
         return redirect(route('customer.login'))->with(['error' => 'Invalid Verifikasi Token']);
     }

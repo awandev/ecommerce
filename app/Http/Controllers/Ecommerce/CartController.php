@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers\Ecommerce;
 
+use App\City;
 use App\Order;
 use App\Product;
 use App\Customer;
+use App\District;
 use App\Province;
+use App\OrderDetail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\CustomerRegisterMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Mail\CustomerRegisterMail;
-use App\OrderDetail;
-use Mail;
+use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
 {
@@ -97,9 +99,9 @@ class CartController extends Controller
             'customer_phone'    => 'required',
             'email'             => 'required|email',
             'customer_address'  => 'required|string',
-            'province_id'       => 'required|exists:province, id',
-            'city_id'           => 'required|exists:cities, id',
-            'district_id'       => 'required|exists:districts, id',
+            'province_id'       => 'required|exists:provinces,id',
+            'city_id'           => 'required|exists:cities,id',
+            'district_id'       => 'required|exists:districts,id',
         ]);
 
         // inisiasi database transaction
@@ -151,7 +153,7 @@ class CartController extends Controller
                 // ambil data produk berdasarkan product_id
                 $product = Product::find($row['product_id']);
                 // simpan detail order
-                OrderDetail::crete([
+                OrderDetail::create([
                     'order_id'  => $order->id,
                     'product_id' => $row['product_id'],
                     'price' => $row['product_price'],
@@ -185,5 +187,21 @@ class CartController extends Controller
         $order = Order::with(['district.city'])->where('invoice', $invoice)->first();
         // load view checkout_finish.blade.php dan passing data order
         return view('ecommerce.checkout_finish', compact('order'));
+    }
+
+    public function getCity()
+    {
+        //QUERY UNTUK MENGAMBIL DATA KOTA / KABUPATEN BERDASARKAN PROVINCE_ID
+        $cities = City::where('province_id', request()->province_id)->get();
+        //KEMBALIKAN DATANYA DALAM BENTUK JSON
+        return response()->json(['status' => 'success', 'data' => $cities]);
+    }
+
+    public function getDistrict()
+    {
+        //QUERY UNTUK MENGAMBIL DATA KECAMATAN BERDASARKAN CITY_ID
+        $districts = District::where('city_id', request()->city_id)->get();
+        //KEMUDIAN KEMBALIKAN DATANYA DALAM BENTUK JSON
+        return response()->json(['status' => 'success', 'data' => $districts]);
     }
 }

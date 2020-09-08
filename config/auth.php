@@ -41,12 +41,11 @@ return [
             'provider' => 'users',
         ],
 
-        // tambahan
+        /* TAMBAHKAN CODE INI */
         'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
         ],
-
 
         'api' => [
             'driver' => 'token',
@@ -78,10 +77,10 @@ return [
             'model' => App\User::class,
         ],
 
-        // tambahan
+        /* TAMBAHKAN CODE INI */
         'customers' => [
             'driver' => 'eloquent',
-            'model'  => App\Customer::class,
+            'model' => App\Customer::class,
         ],
 
         // 'users' => [

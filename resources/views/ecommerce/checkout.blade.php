@@ -140,19 +140,14 @@
 
 @section('js')
 <script>
-    //KETIKA SELECT BOX DENGAN ID province_id DIPILIH
-        $('#province_id').on('change', function() {
-            //MAKA AKAN MELAKUKAN REQUEST KE URL /API/CITY
-            //DAN MENGIRIMKAN DATA PROVINCE_ID
+    $('#province_id').on('change', function() {
             $.ajax({
                 url: "{{ url('/api/city') }}",
                 type: "GET",
                 data: { province_id: $(this).val() },
                 success: function(html){
-                    //SETELAH DATA DITERIMA, SELEBOX DENGAN ID CITY_ID DI KOSONGKAN
+                    
                     $('#city_id').empty()
-                     //KEMUDIAN APPEND DATA BARU YANG DIDAPATKAN DARI HASIL REQUEST VIA AJAX
-                    //UNTUK MENAMPILKAN DATA KABUPATEN / KOTA
                     $('#city_id').append('<option value="">Pilih Kabupaten/Kota</option>')
                     $.each(html.data, function(key, item) {
                         $('#city_id').append('<option value="'+item.id+'">'+item.name+'</option>')
@@ -161,7 +156,6 @@
             });
         })
 
-        //LOGICNYA SAMA DENGAN CODE DIATAS HANYA BERBEDA OBJEKNYA SAJA
         $('#city_id').on('change', function() {
             $.ajax({
                 url: "{{ url('/api/district') }}",
@@ -175,6 +169,34 @@
                     })
                 }
             });
+        })
+
+        $('#district_id').on('change', function() {
+            $('#courier').empty()
+            $('#courier').append('<option value="">Loading...</option>')
+            $.ajax({
+                url: "{{ url('/api/cost') }}",
+                type: "POST",
+                data: { destination: $(this).val(), weight: $('#weight').val() },
+                success: function(html){
+                    $('#courier').empty()
+                    $('#courier').append('<option value="">Pilih Kurir</option>')
+                    $.each(html.data.results, function(key, item) {
+                        let courier = item.courier + ' - ' + item.service + ' (Rp '+ item.cost +')'
+                        let value = item.courier + '-' + item.service + '-'+ item.cost
+                        $('#courier').append('<option value="'+value+'">' + courier + '</option>')
+                    })
+                }
+            });
+        })
+
+        $('#courier').on('change', function() {
+            let split = $(this).val().split('-')
+            $('#ongkir').text('Rp ' + split[2])
+
+            let subtotal = "{{ $subtotal }}"
+            let total = parseInt(subtotal) + parseInt(split['2'])
+            $('#total').text('Rp' + total)
         })
 </script>
 @endsection

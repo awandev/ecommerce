@@ -399,4 +399,3 @@
 
 
 })(jQuery)
-$('select').niceSelect();
