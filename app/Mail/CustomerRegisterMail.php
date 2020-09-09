@@ -2,11 +2,11 @@
 
 namespace App\Mail;
 
-use App\Customer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Customer;
 
 class CustomerRegisterMail extends Mailable
 {
@@ -17,11 +17,8 @@ class CustomerRegisterMail extends Mailable
      *
      * @return void
      */
-
     protected $customer;
     protected $randomPassword;
-
-    // meminta data berupa informasi customer dan random password yang belum diencrypt
     public function __construct(Customer $customer, $randomPassword)
     {
         $this->customer = $customer;
@@ -35,12 +32,11 @@ class CustomerRegisterMail extends Mailable
      */
     public function build()
     {
-        // mengeset subject email, view mana yang akan di-load dan data apa yang akan dipassing ke view
         return $this->subject('Verifikasi Pendaftaran Anda')
             ->view('emails.register')
             ->with([
-                'customer'  => $this->customer,
-                'password'  => $this->randomPassword
+                'customer' => $this->customer,
+                'password' => $this->randomPassword
             ]);
     }
 }

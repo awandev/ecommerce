@@ -34,6 +34,7 @@ Route::post('/cart/update', 'Ecommerce\CartController@updateCart')->name('front.
 
 Route::get('/checkout', 'Ecommerce\CartController@checkout')->name('front.checkout');
 Route::post('/checkout', 'Ecommerce\CartController@processCheckout')->name('front.store_checkout');
+Route::get('/checkout/{invoice}', 'Ecommerce\CartController@checkoutFinish')->name('front.finish_checkout');
 Route::get('city', 'Ecommerce\CartController@getCity'); //route API untuk city
 Route::get('district', 'Ecommerce\CartController@getDistrict'); //route API untuk district
 

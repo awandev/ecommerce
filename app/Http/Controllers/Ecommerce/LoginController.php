@@ -36,6 +36,10 @@ class LoginController extends Controller
 
     public function dashboard()
     {
+        $orders = Order::selectRaw('COALESCE(SUM(CASE WHEN status = 0 THEN subtotal END), 0) AS pending,
+            COALESCE(count(CASE WHEN status = 3 THEN subtotal END), 0) as shipping,
+            COALESCE(count(CASE WHEN status = 4 THEN subtotal END), 0) as completeOrder')
+            ->where('customer_id', auth()->guard('customer')->user()->id)->get();
         return view('ecommerce.dashboard');
     }
 

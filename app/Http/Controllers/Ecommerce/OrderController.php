@@ -18,7 +18,6 @@ class OrderController extends Controller
         return view('ecommerce.orders.index', compact('orders'));
     }
 
-
     public function view($invoice)
     {
         $order = Order::with(['district.city.province', 'details', 'details.product', 'payment'])
@@ -33,49 +32,49 @@ class OrderController extends Controller
 
     public function storePayment(Request $request)
     {
-        // validasi datanya
+        // validasi datanya 
         $this->validate($request, [
-            'invoice'   => 'required|exists:orders,invoice',
-            'name'      => 'required|string',
-            'transfer_to' => 'required|string',
+            'invoice'       => 'required|exists:orders, invoice',
+            'name'          => 'required|string',
+            'transfer_to'   => 'required|string',
             'transfer_date' => 'required',
-            'amount'    => 'required|integer',
-            'proof' => 'required|image|mimes:jpg,png,jpeg',
+            'amount'        => 'required|integer',
+            'proof'         => 'required|image|mimes:jpg,png,jpeg',
         ]);
 
-        // define database transaction untuk menghindari kesalahan sinkronisasi data jika terjadi error ditengah proses query
+        // define database transaction untuk menghindari kesalahan sinkronisasi data jika terjadi error di tengah proses query
         DB::beginTransaction();
         try {
-            // ambil data order berdasarkan invoice ID
+            // ambil data order berdasarkan invoice id
             $order = Order::where('invoice', $request->invoice)->first();
-
             // jika statusnya masih 0 dan ada file bukti transfer yang dikirim
             if ($order->status == 0 && $request->hasFile('proof')) {
-                // maka upload file gambar tersebut
+                // upload file gambar tersebut
                 $file = $request->file('proof');
                 $filename = time() . '.' . $file->getClientOriginalExtension();
                 $file->storeAs('public/payment', $filename);
 
                 // kemudian simpan informasi pembayarannya
                 Payment::create([
-                    'order_id'  => $order->id,
-                    'name'      => $request->name,
+                    'order_id'      => $order->id,
+                    'name'          => $request->name,
                     'transfer_to'   => $request->transfer_to,
                     'transfer_date' => Carbon::parse($request->transfer_date)->format('Y-m-d'),
-                    'amount'    => $request->amount,
-                    'proof'     => $filename,
-                    'status'    => false
+                    'amount'        => $request->amount,
+                    'proof'         => $filename,
+                    'status'        => false
                 ]);
 
                 // dan ganti status order menjadi 1
                 $order->update(['status' => 1]);
 
-                // jika tidak ada error, maka commit untuk menandakan bahwa transaksi berhasil
+                // jika tidak error, maka commit untuk menandakan bahwa transaksi berhasil
                 DB::commit();
 
                 // redirect dan kirimkan pesan
                 return redirect()->back()->with(['success' => 'Pesanan Dikonfirmasi']);
             }
+
             // redirect dengan error message
             return redirect()->back()->with(['error' => 'Error, Upload Bukti Transfer']);
         } catch (\Exception $e) {
