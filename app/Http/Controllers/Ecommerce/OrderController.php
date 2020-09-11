@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use Carbon\Carbon;
 use App\Payment;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -57,6 +58,7 @@ class OrderController extends Controller
         try {
             // ambil data order berdasarkan invoice id
             $order = Order::where('invoice', $request->invoice)->first();
+            if ($order->subtotal != $request->amount) return redirect()->back()->with(['error' => 'Error, Pembayaran harus sama dengan tagihan']);
             // jika statusnya masih 0 dan ada file bukti transfer yang dikirim
             if ($order->status == 0 && $request->hasFile('proof')) {
                 // upload file gambar tersebut
@@ -93,5 +95,24 @@ class OrderController extends Controller
             // dan kirimkan pesan error
             return redirect()->back()->with(['error' => $e->getMessage()]);
         }
+    }
+
+
+    public function pdf($invoice)
+    {
+        // get data order berdasarkan invoice
+        $order = Order::with(['disctict.city.province', 'details', 'details.product', 'payment'])
+            ->where('invoice', $invoice)->first();
+
+        // mencegah direct akses oleh user, sehingga hanya pemiliknya yang bisa melihat fakturnya
+        if (!\Gate::forUser(auth()->guard('customer')->user())->allows('order-view', $order)) {
+            return redirect(route('customer.view_order', $order->invoice));
+        }
+
+        // jika dia adalah pemiliknya, maka load view berikut dan passing data orders
+        $pdf = PDF::loadView('ecommerce.orders.pdf', compact('order'));
+
+        // kemudian buka file pdfnya di browser
+        return $pdf->stream();
     }
 }
