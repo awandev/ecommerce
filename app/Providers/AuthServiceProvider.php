@@ -25,6 +25,13 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        //
+        // kita membuat gate dengan nama order-view, 
+        // dimana dia meminta dua parameter yakni customer dan order
+        Gate::define('order-view', function ($customer, $order) {
+            // kemudian di check, jika customer id sama dengan customer_id yang ada pada table order
+            // maka return-nya adalah TRUE
+            // gate ini hanya akan me-return true/false sebagai tanda diizinkan atau tidak
+            return $customer->id == $order->customer_id;
+        });
     }
 }

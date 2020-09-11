@@ -91,6 +91,10 @@ class CartController extends Controller
         return view('ecommerce.checkout', compact('provinces', 'carts', 'subtotal', 'weight'));
     }
 
+
+
+
+
     public function processCheckout(Request $request)
     {
         // validasi datanya
@@ -170,6 +174,7 @@ class CartController extends Controller
             $cookie = cookie('dw-carts', json_encode($carts), 2880);
 
             Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password));
+            Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password)); //TAMBAHKAN CODE INI SAJA 
 
             // redirect ke halaman finish transaksi
             return redirect(route('front.finish_checkout', $order->invoice))->cookie($cookie);

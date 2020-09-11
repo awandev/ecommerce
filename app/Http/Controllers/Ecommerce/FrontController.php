@@ -6,6 +6,7 @@ use App\Category;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Product;
+use App\Province;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -72,5 +73,48 @@ class FrontController extends Controller
         // jika tidak ada, maka redirect ke halaman login
         // dengan mengirimkan flash session error
         return redirect(route('customer.login'))->with(['error' => 'Invalid Verifikasi Token']);
+    }
+
+
+    public function customerSettingForm()
+    {
+        // mengambil data customer yang sedang login
+        $customer = auth()->guard('customer')->user()->load('district');
+
+        // get data provinsi untuk ditampilkan pada select box
+        $provinces = Province::orderBy('name', 'ASC')->get();
+
+        // load view setting.blade.php dan passing data customer
+        return view('ecommerce.setting', compact('customer', 'provinces'));
+    }
+
+    public function customerUpdateProfile(Request $request)
+    {
+        // validasi data yang dikirim
+        $this->validate($request, [
+            'name'          => 'required|string|max:100',
+            'phone_number'  => 'required|max:15',
+            'address'       => 'required|string',
+            'district_id'   => 'required|exists:districts,id',
+            'password'      => 'nullable|string|min:6'
+        ]);
+
+        // ambil data customer yang sedang login
+        $user = auth()->guard('customer')->user();
+
+        // ambil data yang dikirim dari form
+        // tapi hanya 4 column saja sesuai yang ada di bawah
+        $data = $request->only('name', 'phone_number', 'address', 'district_id');
+
+        // adapun password kita cek dulu, jika tidak kosong
+        if ($request->password != '') {
+            // maka tambahkan ke dalam array
+            $data['password'] = $request->password;
+        }
+
+        // terus update datanya
+        $user->update($data);
+        // dan redirect kembali dengan mengirimkan pesan berhasil
+        return redirect()->back()->with(['success' => 'Profil Berhasil Diperbaharui']);
     }
 }

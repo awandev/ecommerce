@@ -22,7 +22,17 @@ class OrderController extends Controller
     {
         $order = Order::with(['district.city.province', 'details', 'details.product', 'payment'])
             ->where('invoice', $invoice)->first();
-        return view('ecommerce.orders.view', compact('order'));
+
+        // jadi kita cek, value forUser() nya adalah customer yang sedang login
+        // dan allownya meminta dua parameter
+        // pertama adalah nama gate yang dibuat sebelumnya, dan yang kedua adalah data order dari query di atas
+        if (\Gate::forUser(auth()->guard('customer')->user())->allows('order-view', $order)) {
+            // jika hasilnya true, maka kita tampilkan datanya
+            return view('ecommerce.orders.view', compact('order'));
+        }
+
+        // jika false, maka redirect ke halaman yang diinginkan
+        return redirect(route('customer.orders'))->with(['error' => 'Anda tidak diizinkan untuk mengakses order orang lain']);
     }
 
     public function paymentForm()
