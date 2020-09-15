@@ -116,7 +116,7 @@ class CartController extends Controller
             // check data customer berdasarkan email
             $customer = Customer::where('email', $request->email)->first();
             // jika dia tidak login dan data customernya ada
-            if (!auth()->check() && $customer) {
+            if (!auth()->guard('customer')->check() && $customer) {
                 // maka redirect dan tampilkan instruksi untuk login
                 return redirect()->back()->with(['error' => 'Silahkan login terlebih dahulu']);
             }
@@ -128,18 +128,25 @@ class CartController extends Controller
                 return $q['qty'] * $q['product_price'];
             });
 
-            // simpan data customer baru
-            $password = Str::random(8);
-            $customer = Customer::create([
-                'name' => $request->customer_name,
-                'email' => $request->email,
-                'password' => $password,
-                'phone_number' => $request->customer_phone,
-                'address' => $request->customer_address,
-                'district_id' => $request->district_id,
-                'activate_token' => Str::random(30),
-                'status' => false
-            ]);
+            // untuk menghindari duplicate customer, masukkan query untuk menambahkan customer baru
+            // sebenarnya validasinya bisa dimasukkan pada method validation di atas
+            if (!auth()->guard('customer')->check()) {
+
+                // simpan data customer baru
+                $password = Str::random(8);
+                $customer = Customer::create([
+                    'name' => $request->customer_name,
+                    'email' => $request->email,
+                    'password' => $password,
+                    'phone_number' => $request->customer_phone,
+                    'address' => $request->customer_address,
+                    'district_id' => $request->district_id,
+                    'activate_token' => Str::random(30),
+                    'status' => false
+                ]);
+            }
+
+
 
             // simpan data order
             $order = Order::create([
@@ -173,8 +180,10 @@ class CartController extends Controller
             // kosongkan data keranjang belanja di cookie
             $cookie = cookie('dw-carts', json_encode($carts), 2880);
 
-            Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password));
-            Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password)); //TAMBAHKAN CODE INI SAJA 
+            if (!auth()->guard('customer')->check()) {
+                Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password));
+            }
+
 
             // redirect ke halaman finish transaksi
             return redirect(route('front.finish_checkout', $order->invoice))->cookie($cookie);

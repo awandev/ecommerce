@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Order;
 use Carbon\Carbon;
 use App\Payment;
-use Barryvdh\DomPDF\PDF;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +45,7 @@ class OrderController extends Controller
     {
         // validasi datanya 
         $this->validate($request, [
-            'invoice'       => 'required|exists:orders, invoice',
+            'invoice'       => 'required|exists:orders,invoice',
             'name'          => 'required|string',
             'transfer_to'   => 'required|string',
             'transfer_date' => 'required',
@@ -100,19 +100,17 @@ class OrderController extends Controller
 
     public function pdf($invoice)
     {
-        // get data order berdasarkan invoice
-        $order = Order::with(['disctict.city.province', 'details', 'details.product', 'payment'])
+        //GET DATA ORDER BERDASRKAN INVOICE
+        $order = Order::with(['district.city.province', 'details', 'details.product', 'payment'])
             ->where('invoice', $invoice)->first();
-
-        // mencegah direct akses oleh user, sehingga hanya pemiliknya yang bisa melihat fakturnya
+        //MENCEGAH DIRECT AKSES OLEH USER, SEHINGGA HANYA PEMILIKINYA YANG BISA MELIHAT FAKTURNYA
         if (!\Gate::forUser(auth()->guard('customer')->user())->allows('order-view', $order)) {
             return redirect(route('customer.view_order', $order->invoice));
         }
 
-        // jika dia adalah pemiliknya, maka load view berikut dan passing data orders
+        //JIKA DIA ADALAH PEMILIKNYA, MAKA LOAD VIEW BERIKUT DAN PASSING DATA ORDERS
         $pdf = PDF::loadView('ecommerce.orders.pdf', compact('order'));
-
-        // kemudian buka file pdfnya di browser
+        //KEMUDIAN BUKA FILE PDFNYA DI BROWSER
         return $pdf->stream();
     }
 }

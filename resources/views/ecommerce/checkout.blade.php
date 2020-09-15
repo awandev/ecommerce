@@ -41,7 +41,8 @@
                         @csrf
                         <div class="col-md-12 form-group p_star">
                             <label for="">Nama Lengkap</label>
-                            <input type="text" class="form-control" id="first" name="customer_name" required>
+                            <input type="text" class="form-control" id="first" name="customer_name" required
+                                {{ auth()->guard('customer')->check() ? 'readonly':'' }}>
 
                             <!-- UNTUK MENAMPILKAN JIKA TERDAPAT ERROR VALIDASI -->
                             <p class="text-danger">{{ $errors->first('customer_name') }}</p>
