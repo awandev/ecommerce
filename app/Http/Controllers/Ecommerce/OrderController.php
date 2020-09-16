@@ -174,8 +174,43 @@ class OrderController extends Controller
                 'status'        => 0
             ]);
 
+
+            // tambahkana telegram BOT untuk kirim pesan 
+            $order = Order::find($id); //ambil data order berdasarkan ID
+            // kirim pesan melalui BOT
+            $this->sendMessage('#' . $order->invoice, $request->reason);
+
             // lalu tampilkan notifikasi
             return redirect()->back()->with(['success' => 'Permintaan Refund Dikirim']);
+        }
+    }
+
+
+    // reusable CURL agar tidak menuliskan code yang sama berulang kali
+    private function getTelegram($url, $params)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url . $params);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+
+        $content = curl_exec($ch);
+        curl_close($ch);
+        return json_decode($content, true);
+    }
+
+    private function sendMessage($order_id, $reason)
+    {
+        $key = env('TELEGRAM_KEY'); // ambil token dari .env
+        // lalu kirim request ke telegram untuk mengambil data user yang melisten BOT kita
+        $chat = $this->getTelegram('https://api.telegram.org/' . $key . '/getUpdates', '');
+        // jika ada
+        if ($chat['ok']) {
+            // pesan ini hanya dikirim ke admin, maka kita tidak perlu melooping hasil dari get data user
+            // cukup mengambil key 0 saja atau list yang pertama
+            // untuk mendapatkan CHAT_ID
+
         }
     }
 }
