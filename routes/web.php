@@ -82,6 +82,15 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'auth'], function () 
     Route::resource('product', 'ProductController')->except(['show']);
     Route::get('/product/bulk', 'ProductController@massUploadForm')->name('product.bulk');
     Route::post('/product/bulk', 'ProductController@massUpload')->name('product.saveBulk');
+
+    Route::group(['prefix' => 'reports'], function () {
+        Route::get('/order', 'HomeController@orderReport')->name('report.order');
+        Route::get('/order/pdf/{daterange}', 'HomeController@orderReportPdf')->name('report.order_pdf');
+        Route::get('/return', 'HomeController@returnReport')->name('report.return');
+        Route::get('/return/pdf/{daterange}', 'HomeController@returnReportPdf')->name('report.return_pdf');
+    });
+
+
     Route::group(['prefix' => 'orders'], function () {
         Route::get('/', 'OrderController@index')->name('orders.index');
         Route::delete('/{id}', 'OrderController@destroy')->name('orders.destroy');
