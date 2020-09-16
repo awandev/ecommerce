@@ -15,6 +15,7 @@ class OrderController extends Controller
         // query untuk mengambil semua pesanan dan load data yang berelasi menggunakan eager loading
         // dan urutkan berdasarkan created_at
         $orders = Order::with(['customer.district.city.province'])
+            ->withCount('return')
             ->orderBy('created_at', 'DESC');
 
         // jika Q untuk pencarian tidak kosong
@@ -73,6 +74,21 @@ class OrderController extends Controller
         // kirim email ke pelanggan terkait
         Mail::to($order->customer->email)->send(new OrderMail($order));
         // redirect kembali
+        return redirect()->back();
+    }
+
+    public function return($invoice)
+    {
+        $order = Order::with(['return', 'customer'])->where('invoice', $invoice)->first();
+        return view('orders.return', compact('order'));
+    }
+
+    public function approveReturn(Request $request)
+    {
+        $this->validate($request, ['status' => 'required']); //validasi status
+        $order = Order::find($request->order_id); //query berdasarkan order_id
+        $order->return()->update(['status' => $request->status]); // update status yang ada di table order_returns melalui order
+        $order->update(['status' => 4]); // update status yang ada di table orders
         return redirect()->back();
     }
 }

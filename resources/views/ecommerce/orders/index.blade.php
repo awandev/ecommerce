@@ -36,6 +36,10 @@
                                 <h4 class="card-title">List Pesanan</h4>
                             </div>
                             <div class="card-body">
+                                @if (session('success'))
+                                <div class="alert alert-success">{{ session('success') }}</div>
+                                @endif
+
                                 @if (session('error'))
                                 <div class="alert alert-danger">{{ session('error') }}</div>
                                 @endif
@@ -62,8 +66,26 @@
                                                 <td>{!! $row->status_label !!}</td>
                                                 <td>{{ $row->created_at }}</td>
                                                 <td>
-                                                    <a href="{{ route('customer.view_order', $row->invoice) }}"
-                                                        class="btn btn-primary btn-sm">Detail</a>
+
+                                                    <form action="{{ route('customer.order_accept') }}" method="post"
+                                                        class="form-inline" onsubmit="return confirm('Anda Yakin ?');">
+                                                        @csrf
+                                                        {{-- tombol view order kita bungkus JS dengan form agar rapi --}}
+                                                        <a href="{{ route('customer.view_order', $row->invoice) }}"
+                                                            class="btn btn-primary btn-sm mr-1">Detail</a>
+                                                        <input type="hidden" name="order_id" value="{{ $row->id }}">
+                                                        @if ($row->status == 3 && $row->return_count == 0)
+                                                        {{-- bila statusnya adalah shipping (3) --}}
+                                                        <button class="btn btn-success btn-sm">Terima</button>
+                                                        {{-- tombol untuk mengarah ke halaman return --}}
+                                                        <a href="{{ route('customer.order_return', $row->invoice) }}"
+                                                            class="btn btn-danger btn-sm mr-1">Return</a>
+                                                        @endif
+
+                                                    </form>
+
+                                                    {{-- <a href="{{ route('customer.view_order', $row->invoice) }}"
+                                                    class="btn btn-primary btn-sm">Detail</a> --}}
                                                 </td>
                                             </tr>
                                             @empty
