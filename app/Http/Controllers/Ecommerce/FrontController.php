@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Ecommerce;
 
+use App\Order;
+use App\Product;
 use App\Category;
 use App\Customer;
-use App\Http\Controllers\Controller;
-use App\Product;
 use App\Province;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 
 class FrontController extends Controller
@@ -116,5 +117,24 @@ class FrontController extends Controller
         $user->update($data);
         // dan redirect kembali dengan mengirimkan pesan berhasil
         return redirect()->back()->with(['success' => 'Profil Berhasil Diperbaharui']);
+    }
+
+
+    public function referalProduct($user, $product)
+    {
+        $code = $user . '-' . $product; //kita merge userid dan productid
+        $product = Product::find($product); //find product berdasarkan productID
+        $cookie = cookie('awan-afiliasi', json_encode($code, 2880)); //buat cookie dengan nama awan-afiliasi dan valuenya adalah code yang sudah di merge
+        return redirect(route('front.show_product', $product->slug))->cookie($cookie);
+    }
+
+
+    public function listCommission()
+    {
+        $user = auth()->guard('customer')->user(); //ambil data user yang login
+        // query berdasarkan ID user dari data ref yang ada diorder dengan status 4 atau selesai
+        $orders = Order::where('ref', $user->id)->where('status', 4)->paginate(10);
+        // load view affiliate.blade.php dan passing data orders
+        return view('ecommerce.affiliate', compact('orders'));
     }
 }

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\Mail\CustomerRegisterMail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Cookie;
 use Illuminate\Support\Facades\Mail;
 
 class CartController extends Controller
@@ -113,6 +114,14 @@ class CartController extends Controller
         // jika terjadi error maka kita rollback agar datanya selaras
         DB::beginTransaction();
         try {
+
+            // tambahkan dua dari code ini
+            // get cookie dari browser
+            $affiliate = json_decode(request()->cookie('awan-afiliasi'), true);
+            // explode data cookie untuk memisahkan userid dan productId
+            $explodeAffiliate = explode('-', $affiliate);
+
+
             // check data customer berdasarkan email
             $customer = Customer::where('email', $request->email)->first();
             // jika dia tidak login dan data customernya ada
@@ -179,6 +188,9 @@ class CartController extends Controller
             $carts = [];
             // kosongkan data keranjang belanja di cookie
             $cookie = cookie('dw-carts', json_encode($carts), 2880);
+
+            // hapus data cookie afiliasi
+            Cookie::queue(Cookie::forget('awan-afiliasi'));
 
             if (!auth()->guard('customer')->check()) {
                 Mail::to($request->email)->send(new CustomerRegisterMail($customer, $password));

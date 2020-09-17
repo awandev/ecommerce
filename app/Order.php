@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     protected $guarded = [];
-    protected $appends = ['status_label'];
+    protected $appends = ['status_label', 'ref_status_label', 'commission'];
 
     public function district()
     {
@@ -27,6 +27,14 @@ class Order extends Model
             return '<span class="badge badge-warning">Dikirim</span>';
         }
         return '<span class="badge badge-success">Selesai</span>';
+    }
+
+    public function getCommissionAttribute()
+    {
+        // komisinya adalah 10% dari subtotal
+        $commission = ($this->subtotal * 10) / 100;
+        // tapi jika lebih dari 10.000 maka yang dikembalikan adalah 10.000
+        return $commission > 10000 ? 10000 : $commission;
     }
 
     public function details()

@@ -62,6 +62,8 @@ Route::group(['prefix' => 'member', 'namespace' => 'Ecommerce'], function () {
 
         Route::get('orders/return/{invoice}', 'OrderController@returnForm')->name('customer.order_return');
         Route::put('orders/return/{invoice}', 'OrderController@processReturn')->name('customer.return');
+
+        Route::get('/afiliasi', 'FrontController@listCommission')->name('customer.affiliate');
     });
 });
 
@@ -101,3 +103,6 @@ Route::group(['prefix' => 'administrator', 'middleware' => 'auth'], function () 
         Route::post('/return', 'OrderController@approveReturn')->name('orders.approve_return');
     });
 });
+
+
+Route::get('/product/ref/{user}/{product}', 'Ecommerce\FrontController@referalProduct')->name('front.afiliasi');

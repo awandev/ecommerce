@@ -46,7 +46,14 @@
                                 <span>Kategori</span> : {{ $product->category->name }}</a>
                         </li>
                     </ul>
-                    <p></p>
+                    <p>
+                        @if (auth()->guard('customer')->check())
+                        <label>Afiliasi Link</label>
+                        <input type="text" name="" id="" class="form-control"
+                            value="{{ url('/product/ref' . auth()->guard('customer')->user()->id . '/' . $product->id) }}"
+                            readonly>
+                        @endif
+                    </p>
 
                     <form action="{{ route('front.cart') }}" method="POST">
                         @csrf
